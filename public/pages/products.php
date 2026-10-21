@@ -24,7 +24,7 @@ if (!isset($_SESSION['authenticated']) || $_SESSION['authenticated'] !== true) {
                 <li class="active-tab"><a href="products.php">🗃️ Products Spreadsheet</a></li>
                 <li><a href="dashboard.php">📊 Summary Analytics</a></li>
                 <li><a href="categories.php">📁 Categories Catalog</a></li>
-                <li><a href="../api/products/backup.php">💾 Database Backup</a></li>
+                <li><a href="../../api/products/backup.php">💾 Database Backup</a></li>
             </ul>
         </nav>
 
