@@ -1,0 +1,17 @@
+/* 📊 ANALYTICS VIEWBOARD COMPONENT STYLING */
+.metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 24px;
+    margin-top: 32px;
+}
+
+.metric-card {
+    background: rgba(17, 24, 39, 0.6);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 28px;
+    border-radius: 16px;
+    text-align: center;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+}

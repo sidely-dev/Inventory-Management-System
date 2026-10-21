@@ -6,14 +6,14 @@
  */
 
 define('DB_HOST', 'localhost'); // Database host
-define('DB_NAME', 'InventoryDB'); // Database name
 define('DB_USER', 'root'); // Database username - the default user name for local XAMPP is "root"
 define('DB_PASS', ''); // Database password - the default password is ""
+define('DB_NAME', 'InventoryDB'); // Database name
 
 function getDatabaseConnection() {
     try {
         //Setting Up the Data source name (DSN) for the PDO connection
-        $dsn = "mysql:host=" . DB_HOST . ";dbname=" . DB_NAME;
+        $dsn = "mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=utf8mb4";
 
 
         //Configuring the PDO connection for Error handling & Safety
@@ -25,9 +25,9 @@ function getDatabaseConnection() {
 
         return new PDO($dsn, DB_USER, DB_PASS, $options);
         
-    } catch (PDOException $e) {
+    } catch (PDOException $exception) {
         //STOPS Execution and displays the error message if the connection fails
-        echo "Connection failed: " . $e->getMessage();
+        die("❌ Critical Database Connection Failure: " . $exception->getMessage());
         return null;
     }
 }

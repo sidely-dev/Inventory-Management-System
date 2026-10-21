@@ -1,0 +1,20 @@
+/* 📝 REUSABLE FORM COMPONENT INPUT FIELDS STYLING */
+.form-card {
+    background: #111827;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 32px;
+    border-radius: 16px;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+input, select, textarea {
+    width: 100%;
+    padding: 14px;
+    background: #030712;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    outline: none;
+}

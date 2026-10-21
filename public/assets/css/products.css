@@ -1,0 +1,19 @@
+/* 📦 INVENTORY LEDGER SPREADSHEET ELEMENT STYLING */
+.table-container {
+    width: 100%;
+    overflow-x: auto;
+    background: #111827;
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+th, td {
+    padding: 16px 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
