@@ -29,4 +29,5 @@ if (!isset($_SESSION['authenticated']) || $_SESSION['authenticated'] !== true) {
         </tbody>
     </table>
 </div>
-
+<script src="../assets/js/products.js"></script>
+<script src="../assets/js/main.js"></script>
