@@ -275,3 +275,69 @@ tr:hover td {
     color: #ff7a59;
     border-color: #ff7a59;
 }
+/* =========================================================================
+ * 🏷️ INTERACTIVE CATEGORY PILL PIPELINE STYLING 
+ * ========================================================================= */
+.category-pipeline-container {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: #ffffff;
+    padding: 16px 24px;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    margin-bottom: 24px;
+}
+
+.pipeline-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.pipeline-pills {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.category-pill {
+    background: #f1f5f9;
+    color: #475569;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    border: 1px solid #e2e8f0;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.category-pill:hover {
+    background: #e2e8f0;
+    color: #0f172a;
+}
+
+/* Active Highlight Filter State matching your InsuredMine reference style */
+.category-pill.active-pill {
+    background: rgba(255, 122, 89, 0.1);
+    color: #ff7a59;
+    border-color: #ff7a59;
+    font-weight: 600;
+}
+
+.category-pill .pill-count {
+    background: rgba(0, 0, 0, 0.05);
+    padding: 2px 6px;
+    border-radius: 10px;
+    font-size: 0.75rem;
+}
+
+.category-pill.active-pill .pill-count {
+    background: rgba(255, 122, 89, 0.2);
+}

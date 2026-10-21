@@ -1,218 +1,123 @@
 /**
- * 📊 INVENTORY DATA RENDERING CONTROLLER (public/assets/js/products.js)
- * 
- * WHAT THIS SCRIPT DOES:
- * 1. Uses the browser's native asynchronous Fetch API to call PHP endpoint.
- * 2. Processes the incoming backend JSON data safely.
- * 3. Dynamically injects structured HTML table body rows onto dashboard screen.
+ * 📊 INVENTORY DATA RENDERING & PILL FILTER CONTROLLER (public/assets/js/products.js)
  */
 
-// Execute automatically as soon as the browser finishes loading the structural HTML DOM grid
+let globalInventoryData = []; // Store products cache locally for rapid calculations
+
 document.addEventListener("DOMContentLoaded", () => {
-    console.log("🏁 Product data interface controller initialized. Fetching streams...");
-    loadInventoryTable();
+    console.log("🏁 Product pipeline dashboard initialized.");
+    initializeDashboardEngine();
 });
 
+async function initializeDashboardEngine() {
+    await fetchMasterInventory(); // 1. Pull products first to count items per category
+    await buildCategoryPipeline(); // 2. Generate the visual card row
+    renderInventoryTable("");      // 3. Show all items initially
+}
+
 /**
- * Asynchronously makes an HTTP request to PHP backend API endpoint
+ * Pulls master product records from the PHP API backend channel
  */
-async function loadInventoryTable() {
-    // Target the table body container element where  dynamic rows should go
-    const tableBody = document.getElementById("product-table-body");
-    
-    // Safety check: Don't execute if the active page doesn't have the table layout (e.g., on the form pages)
-    if (!tableBody) return;
-
+async function fetchMasterInventory() {
     try {
-        // Show a helpful visual status row while waiting for XAMPP to answer
-        tableBody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: #94a3b8;">📡 Fetching live storage records...</td></tr>`;
-
-        // 1. Fire an asynchronous HTTP GET request to the exact relative backend API route path
         const response = await fetch("../../api/products/read.php");
-
-        // 2. Transmute the text stream response directly into a readable JavaScript dictionary array object
         const result = await response.json();
-
-        // 3. Fallback protection: If the database block fails internally, throw an operation exception
-        if (!result.success) {
-            throw new Error(result.message || "Failed to parse system entries.");
-        }
-
-        // 4. Verification check: Handle empty inventories gracefully if no rows are returned
-        if (result.count === 0) {
-            tableBody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: #f59e0b;">📦 Inventory is currently empty. Add a product to get started!</td></tr>`;
-            return;
-        }
-
-        // 5. Clean out existing placeholders before building new content items
-        tableBody.innerHTML = "";
-
-        // 6. Loop over every incoming database product item and map it into structured HTML row cells
-        result.data.forEach(product => {
-            const row = document.createElement("tr");
-
-            // Format the price securely into standard local decimal currency layout
-            const formattedPrice = parseFloat(product.Price).toFixed(2);
-
-            // Structure individual cell tokens to perfectly match case-sensitive schema strings
-            row.innerHTML = `
-                <td><strong>#${product.ProductID}</strong></td>
-                <td>${product.ProductName}</td>
-                <td><span class="category-badge">${product.CategoryName}</span></td>
-                <td><code>${product.sku}</code></td>
-                <td>R ${formattedPrice}</td>
-                <td><span class="stock-count">${product.QuantityInStock}</span></td>
-                <td>
-                    <button class="action-btn edit-btn" onclick="editProduct(${product.ProductID})">✏️ Edit</button>
-                    <button class="action-btn delete-btn" onclick="confirmDelete(${product.ProductID})">🗑️ Delete</button>
-                </td>
-            `;
-
-            // Append the finished node cleanly onto dashboard interface stack
-            tableBody.innerHTML += row.outerHTML;
-        });
-
-    } catch (error) {
-        console.error("❌ Framework Error observed during dynamic data loop assembly:", error);
-        tableBody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: #ef4444;">⚠️ Connection Failure: ${error.message}</td></tr>`;
-    }
-}
-
-// Append this function to the bottom of your existing public/assets/js/products.js script:
-
-/**
- * Intercepts user delete confirmation actions and passes operational requests to the API router layer
- * @param {number} targetedProductId - The explicit case-sensitive database index key tracking ID
- */
-async function confirmDelete(targetedProductId) {
-    // Native browser window modal logic to avoid accidental clicks
-    const processDeletionConfirmation = confirm(`⚠️ Are you completely sure you want to permanently delete Product #${targetedProductId} from your active warehouse ledger?`);
-    
-    if (!processDeletionConfirmation) {
-        console.log("🛡️ Delete action aborted securely by user request.");
-        return; 
-    }
-
-    try {
-        console.log(`🧹 Processing deletion request sequence for Product #${targetedProductId}...`);
-
-        // 1. Establish connection out to your brand new backend API deletion layer script route
-        const response = await fetch("../../api/products/delete.php", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({ ProductID: parseInt(targetedProductId) }) // Map attributes securely into a JSON payload data string
-        });
-
-        const result = await response.json();
-
         if (result.success) {
-            alert("🧹 " + result.message);
-            // 2. Automatically refresh the visual data table to immediately remove the item record from view
-            loadInventoryTable(); 
-        } else {
-            alert("❌ Operation Denied: " + result.message);
+            globalInventoryData = result.data;
         }
-
-    } catch (error) {
-        console.error("❌ Critical transactional runtime transmission error observed:", error);
-        alert("⚠️ Connection Failure: Server infrastructure did not respond. Check your XAMPP console status.");
+    } catch (err) {
+        console.error("❌ Failed to parse data streams:", err);
     }
 }
 
 /**
- * 📊 INVENTORY DATA RENDERING & FILTER CONTROLLER (public/assets/js/products.js)
+ * Builds the interactive InsuredMine style card filter row dynamically
  */
-
-document.addEventListener("DOMContentLoaded", () => {
-    console.log("🏁 Product dashboard system ready.");
-    loadCategoryFilterDropdown(); // Load category options into filter boxes dynamically
-    loadInventoryTable("");        // Fetch and show all items on start up
-    
-    // Setup event listener to catch dropdown selector shifts
-    const dynamicFilterDropdown = document.getElementById("category-filter");
-    if (dynamicFilterDropdown) {
-        dynamicFilterDropdown.addEventListener("change", (e) => {
-            const chosenCategoryName = e.target.value;
-            console.log(`🔍 Filtering view timeline exclusively for: "${chosenCategoryName}"`);
-            loadInventoryTable(chosenCategoryName);
-        });
-    }
-});
-
-/**
- * Loads backend category records directly into the UI selection filter element
- */
-async function loadCategoryFilterDropdown() {
-    const filterBox = document.getElementById("category-filter");
-    if (!filterBox) return;
+async function buildCategoryPipeline() {
+    const pillsRow = document.getElementById("category-pills-row");
+    if (!pillsRow) return;
 
     try {
         const response = await fetch("../../api/categories/read.php");
         const result = await response.json();
 
         if (result.success) {
-            // Keep the base 'All Categories' option active
-            filterBox.innerHTML = `<option value="">📁 All Categories</option>`;
+            pillsRow.innerHTML = "";
+
+            // Create the initial "All Categories" master card pill
+            const allPill = document.createElement("button");
+            allPill.className = "category-pill active-pill";
+            allPill.innerHTML = `📁 All <span class="pill-count">${globalInventoryData.length}</span>`;
+            allPill.addEventListener("click", (e) => switchActiveFilter(e, ""));
+            pillsRow.appendChild(allPill);
+
+            // Loop over categories and count active product rows inside each
             result.data.forEach(category => {
-                filterBox.innerHTML += `<option value="${category.CategoryName}">${category.CategoryName}</option>`;
+                const itemCount = globalInventoryData.filter(item => item.CategoryName === category.CategoryName).length;
+                
+                const pill = document.createElement("button");
+                pill.className = "category-pill";
+                pill.innerHTML = `${category.CategoryName} <span class="pill-count">${itemCount}</span>`;
+                
+                // Clicking filters table rows immediately
+                pill.addEventListener("click", (e) => switchActiveFilter(e, category.CategoryName));
+                pillsRow.appendChild(pill);
             });
         }
     } catch (err) {
-        console.error("❌ Failed to populate category filtering nodes:", err);
+        console.error("❌ Failed rendering pipeline pills:", err);
     }
 }
 
 /**
- * Asynchronously pulls inventory rows and renders them with optional category string matching filtering
- * @param {string} filterTerm - The textual category name string to check matches against
+ * Manages active card selection highlights and triggers table rendering reloads
  */
-async function loadInventoryTable(filterTerm = "") {
+function switchActiveFilter(event, categoryName) {
+    // Clear the active highlight styles off all pills in the container row
+    document.querySelectorAll(".category-pill").forEach(p => p.classList.remove("active-pill"));
+    
+    // Add the active color class onto the clicked target element
+    const clickedPill = event.target.closest(".category-pill");
+    if (clickedPill) clickedPill.classList.add("active-pill");
+
+    renderInventoryTable(categoryName);
+}
+
+/**
+ * Renders inventory table spreadsheet data rows based on card selection matches
+ */
+function renderInventoryTable(categoryFilter = "") {
     const tableBody = document.getElementById("product-table-body");
     if (!tableBody) return;
 
-    try {
-        tableBody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: #94a3b8;">📡 Fetching live storage records...</td></tr>`;
+    // Filter list cache locally based on chosen string parameter
+    const displayedItems = categoryFilter === "" 
+        ? globalInventoryData 
+        : globalInventoryData.filter(item => item.CategoryName === categoryFilter);
 
-        const response = await fetch("../../api/products/read.php");
-        const result = await response.json();
-
-        if (!result.success) throw new Error(result.message);
-
-        // Filter the array data locally based on user choice if a specific selection was checked
-        const processedItemsList = filterTerm === "" 
-            ? result.data 
-            : result.data.filter(item => item.CategoryName === filterTerm);
-
-        if (processedItemsList.length === 0) {
-            tableBody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: #f59e0b;">📦 No active items found matching current filter scope.</td></tr>`;
-            return;
-        }
-
-        tableBody.innerHTML = "";
-
-        processedItemsList.forEach(product => {
-            const row = document.createElement("tr");
-            const formattedPrice = parseFloat(product.Price).toFixed(2);
-
-            row.innerHTML = `
-                <td><strong>#${product.ProductID}</strong></td>
-                <td>${product.ProductName}</td>
-                <td><span class="category-badge">${product.CategoryName}</span></td>
-                <td><code>${product.sku}</code></td>
-                <td>R ${formattedPrice}</td>
-                <td><span class="stock-count">${product.QuantityInStock}</span></td>
-                <td>
-                    <button class="action-btn edit-btn" onclick="editProduct(${product.ProductID})">✏️ Edit</button>
-                    <button class="action-btn delete-btn" onclick="confirmDelete(${product.ProductID})">🗑️ Delete</button>
-                </td>
-            `;
-            tableBody.appendChild(row);
-        });
-
-    } catch (error) {
-        console.error("❌ Renderer Failure:", error);
-        tableBody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: #ef4444;">⚠️ Connection Failure: ${error.message}</td></tr>`;
+    if (displayedItems.length === 0) {
+        tableBody.innerHTML = `<tr><td colspan="7" style="text-align: center; padding: 30px; color: #64748b;">📦 No inventory products matching this pipeline.</td></tr>`;
+        return;
     }
+
+    tableBody.innerHTML = "";
+
+    displayedItems.forEach(product => {
+        const row = document.createElement("tr");
+        const formattedPrice = parseFloat(product.Price).toFixed(2);
+
+        row.innerHTML = `
+            <td><strong>#${product.ProductID}</strong></td>
+            <td>${product.ProductName}</td>
+            <td><span class="category-badge">${product.CategoryName}</span></td>
+            <td><code>${product.sku}</code></td>
+            <td>R ${formattedPrice}</td>
+            <td><span class="stock-count">${product.QuantityInStock}</span></td>
+            <td>
+                <button class="action-btn" onclick="window.location.href='edit-product.php?id=${product.ProductID}'">✏️ Edit</button>
+                <button class="action-btn" onclick="confirmDelete(${product.ProductID})">🗑️ Delete</button>
+            </td>
+        `;
+        tableBody.appendChild(row);
+    });
 }

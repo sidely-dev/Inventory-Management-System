@@ -29,47 +29,44 @@ if (!isset($_SESSION['authenticated']) || $_SESSION['authenticated'] !== true) {
         </nav>
 
         <!-- 🖥️ Right Application Content Canvas Area -->
-        <div class="main-content">
-            <div class="page-header">
-                <div class="page-title">
-                    <h1>Active Stock Inventory</h1>
-                    <p>Monitor warehouse metrics and relational stock units.</p>
-                </div>
-                <a href="add-product.php" class="btn primary-btn">+ Add Product</a>
-            </div>
-
-            <!-- Dashboard Analytics Indicators Card Matrix Row -->
-            <div class="stats-grid">
-                <div class="stat-card"><h3>Total Unique SKUs</h3><p>6 Items</p></div>
-                <div class="stat-card"><h3>Warehouse Value</h3><p>R 92,345.00</p></div>
-                <div class="stat-card"><h3>Stock Status</h3><p style="color: #34d399;">Healthy</p></div>
-            </div>
-
-            <!-- Spreadsheet Storage Matrix Table Card -->
-            <div class="table-card">
-                <div class="table-toolbar">
-                    <select id="category-filter">
-                        <option value="">📁 Filter By Category</option>
-                    </select>
-                </div>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Name</th>
-                            <th>Category</th>
-                            <th>SKU</th>
-                            <th>Price</th>
-                            <th>Stock</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="product-table-body">
-                        <!-- JavaScript automatically drops your data rows right here! -->
-                    </tbody>
-                </table>
-            </div>
+        <!-- Replace your old <select id="category-filter"> area with this elegant dashboard block -->
+<div class="main-content">
+    <div class="page-header">
+        <div class="page-title">
+            <h1>Active Stock Inventory</h1>
+            <p>Monitor warehouse metrics and relational stock units.</p>
         </div>
+        <a href="add-product.php" class="btn primary-btn">+ Add Product</a>
+    </div>
+
+    <!-- 🏷️ NEW: Interactive Pipeline Category Filter Cards Row -->
+    <div class="category-pipeline-container">
+        <span class="pipeline-label">Quick Filter:</span>
+        <div id="category-pills-row" class="pipeline-pills">
+            <!-- JavaScript will dynamically drop pill cards here -->
+        </div>
+    </div>
+
+    <!-- Spreadsheet Storage Matrix Table Card -->
+    <div class="table-card" style="margin-top: 24px;">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Category</th>
+                    <th>SKU</th>
+                    <th>Price</th>
+                    <th>Stock</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="product-table-body">
+                <!-- Data items injected automatically -->
+            </tbody>
+        </table>
+    </div>
+</div>
 
     </div>
 
